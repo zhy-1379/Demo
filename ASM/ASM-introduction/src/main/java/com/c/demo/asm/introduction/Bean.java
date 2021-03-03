@@ -36,13 +36,15 @@ public class Bean extends ClassLoader implements Opcodes {
         mw.visitMaxs(2, 2);
         mw.visitEnd();
         byte[] code = cw.toByteArray();
-        FileOutputStream fos = new FileOutputStream("Example.class");
-        fos.write(code);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream("Example.class")) {
+            fos.write(code);
+        }
         Bean loader = new Bean();
         Class<?> exampleClass = loader
                 .defineClass("Example", code, 0, code.length);
-        exampleClass.getMethods()[0].invoke(null, new Object[]{null});
+
+        Object[] args1 = {null};
+        exampleClass.getMethods()[0].invoke(null, args1);
 
         // ------------------------------------------------------------------------
         // Same example with a GeneratorAdapter (more convenient but slower)
@@ -70,7 +72,7 @@ public class Bean extends ClassLoader implements Opcodes {
         code = cw.toByteArray();
         loader = new Bean();
         exampleClass = loader.defineClass("Example", code, 0, code.length);
-        exampleClass.getMethods()[0].invoke(null, new Object[]{null});
+        exampleClass.getMethods()[0].invoke(null, args1);
     }
 
 
