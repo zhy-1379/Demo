@@ -1,4 +1,4 @@
-package com.c.demo.asm.introduction;
+package com.c.demo.asm._01_introduction;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;

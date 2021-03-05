@@ -1,4 +1,4 @@
-package com.c.demo.asm.classvisitor;
+package com.c.demo.asm._02_classvisitor;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
