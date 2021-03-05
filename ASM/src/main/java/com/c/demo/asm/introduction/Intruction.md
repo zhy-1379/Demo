@@ -29,3 +29,7 @@ ASM库提供了两个用于生成和转换已编译类的API：
 （1）将事件产生器，过滤器和使用者组件组装成可能复杂的架构，
 
 （2）然后启动事件生产者以运行生成或转换过程。
+
+
+https://tool.oschina.net/apidocs/apidoc?api=asm
+ 
