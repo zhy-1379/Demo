@@ -8,11 +8,16 @@ import java.util.Arrays;
 /**
  * @author zhy
  * @time 2021/3/5
+ *
+ * 构造一个类的字节码，并使用自定义的 ClassLoader 加载
+ * - 类的定义
+ * - 字段的定义
+ * - 方法的定义，不包括方法体
  */
 public class ClassWriteDemo {
 
     /**
-     * 构造一个类的字节码，并使用自定义的 ClassLoader 加载
+     * 构造一个类的字节码，并使用自定义的 ClassLoader 加载，不包括方法体
      */
     public static void main(String[] args) {
         byte[] code = getClassBytes();
@@ -80,8 +85,8 @@ public class ClassWriteDemo {
         ).visitEnd();
 
         cw.visitEnd();
-        byte[] code = cw.toByteArray();
-        return code;
+
+        return cw.toByteArray();
     }
 
 
