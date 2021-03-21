@@ -11,6 +11,7 @@
     <modules>
         <module>ASM</module>
         <module>Core</module>
+        <module>Spark-Demo</module>
     </modules>
 
     <properties>
@@ -21,6 +22,7 @@
         <commons-io.version>2.4</commons-io.version>
         <hutool.version>5.4.3</hutool.version>
         <fastjson.version>1.2.66</fastjson.version>
+        <spark.version>2.3.2</spark.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.version>4.12</junit.version>
         <sonar-scanner.version>3.6.0.1398</sonar-scanner.version>
@@ -58,6 +60,12 @@
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_2.11</artifactId>
+                <version>${spark.version}}</version>
             </dependency>
 
             <!-- test -->
