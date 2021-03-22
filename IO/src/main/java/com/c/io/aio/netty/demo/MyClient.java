@@ -4,7 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -14,6 +13,10 @@ public class MyClient {
     private String host;
     private int port;
 
+    private MyClientHandler clientHandler;
+
+    private ChannelFuture channelFuture;
+
     public MyClient(String host, int port) {
         this.host = host;
         this.port = port;
@@ -21,6 +24,7 @@ public class MyClient {
 
     public void run() throws InterruptedException {
         NioEventLoopGroup eventExecutors = new NioEventLoopGroup();
+        clientHandler = new MyClientHandler();
         try {
             // 创建bootstrap对象，配置参数
             Bootstrap bootstrap = new Bootstrap();
@@ -33,13 +37,13 @@ public class MyClient {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             // 添加客户端通道的处理器
-                            ch.pipeline().addLast(new MyClientHandler());
+                            ch.pipeline().addLast(clientHandler);
                         }
                     });
             System.out.println("客户端准备就绪~");
             // 连接服务端
             // bootstrap.connect(host, port).sync();
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+            channelFuture = bootstrap.connect(host, port).sync();
             // 对通道关闭进行监听
             Channel channel = channelFuture.channel();
             channel.closeFuture().sync();
