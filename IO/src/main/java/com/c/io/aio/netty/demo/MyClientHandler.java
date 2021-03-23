@@ -8,10 +8,31 @@ import io.netty.util.CharsetUtil;
 
 public class MyClientHandler extends ChannelInboundHandlerAdapter {
 
+    private String message;
+    private ChannelHandlerContext ctx;
+
+    public MyClientHandler() {
+        this("inited~");
+    }
+
+    public MyClientHandler(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        super.handlerAdded(ctx);
+        this.ctx = ctx;
+    }
+
+    public void send(String message) {
+        this.ctx.writeAndFlush(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        //发送消息到服务端
-        ctx.writeAndFlush(Unpooled.copiedBuffer("ABCD~", CharsetUtil.UTF_8));
+        // 发送消息到服务端
+        ctx.writeAndFlush(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
 
         // Scanner scanner = new Scanner(System.in);
         // String next = scanner.next();

@@ -1,7 +1,6 @@
 package com.c.io.aio.netty.demo;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,13 +16,15 @@ public class MyClient {
 
     private ChannelFuture channelFuture;
 
+    private NioEventLoopGroup eventExecutors;
+
     public MyClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
     public void run() throws InterruptedException {
-        NioEventLoopGroup eventExecutors = new NioEventLoopGroup();
+        eventExecutors = new NioEventLoopGroup();
         clientHandler = new MyClientHandler();
         try {
             // 创建bootstrap对象，配置参数
@@ -37,6 +38,8 @@ public class MyClient {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             // 添加客户端通道的处理器
+                            // ch.pipeline().addLast(new StringEncoder());
+                            // ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(clientHandler);
                         }
                     });
@@ -44,14 +47,23 @@ public class MyClient {
             // 连接服务端
             // bootstrap.connect(host, port).sync();
             channelFuture = bootstrap.connect(host, port).sync();
-            // 对通道关闭进行监听
-            Channel channel = channelFuture.channel();
-            channel.closeFuture().sync();
-
-        } finally {
+        } catch (Exception e) {
+            // e.printStackTrace();
             // 关闭线程组
             eventExecutors.shutdownGracefully();
         }
+    }
+
+    public void shutdown() {
+        if (eventExecutors != null && !eventExecutors.isShutdown()) {
+            eventExecutors.shutdownGracefully();
+        }
+    }
+
+    public void sendMsg(String message) {
+        System.out.println("try to send message: \t" + message);
+        // this.channelFuture.channel().writeAndFlush(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
+        this.clientHandler.send(message);
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -60,6 +72,15 @@ public class MyClient {
 
         MyClient myClient = new MyClient(host, port);
         myClient.run();
+
+        Thread.sleep(1000);
+        myClient.sendMsg("logic");
+
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(1000);
+            myClient.sendMsg("logic");
+        }
+        myClient.shutdown();
     }
 
 }
