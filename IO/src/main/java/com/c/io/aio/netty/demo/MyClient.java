@@ -1,11 +1,13 @@
 package com.c.io.aio.netty.demo;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.CharsetUtil;
 
 public class MyClient {
 
@@ -66,6 +68,11 @@ public class MyClient {
         this.clientHandler.send(message);
     }
 
+    public void send(String message) {
+        System.out.println("try to send message: \t" + message);
+        this.channelFuture.channel().writeAndFlush(Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
+    }
+
     public static void main(String[] args) throws InterruptedException {
         String host = args.length > 0 ? args[0] : "127.0.0.1";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : 8080;
@@ -75,6 +82,7 @@ public class MyClient {
 
         Thread.sleep(1000);
         myClient.sendMsg("logic");
+        myClient.send("eto");
 
         for (int i = 0; i < 10; i++) {
             Thread.sleep(1000);
