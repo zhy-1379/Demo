@@ -4,11 +4,15 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOutboundInvoker;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.CharsetUtil;
 
+/**
+ * 发送消息；使用 {@link ChannelOutboundInvoker#writeAndFlush(Object)} 接口
+ */
 public class MyClient {
 
     private String host;

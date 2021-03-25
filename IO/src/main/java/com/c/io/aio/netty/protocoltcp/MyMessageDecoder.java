@@ -6,6 +6,11 @@ import io.netty.handler.codec.ReplayingDecoder;
 
 import java.util.List;
 
+/**
+ * Decode a message。
+ * <p>
+ * 先读取 {@link ByteBuf} 中的 int 值 len 作为读取的字节长度，再读取长度为 len 的字节流
+ */
 public class MyMessageDecoder extends ReplayingDecoder<Void> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
