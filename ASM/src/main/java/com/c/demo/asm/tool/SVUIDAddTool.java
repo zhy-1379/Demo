@@ -52,7 +52,7 @@ public class SVUIDAddTool {
 
                         String targetPath = "out/" + entryName;
                         File file = new File(targetPath);
-                        if (file.getParentFile().mkdir()) {
+                        if (file.getParentFile().mkdirs()) {
                             String[] split = entryName.split("/");
                             targetPath = "out/" + split[split.length - 1];
                         }
