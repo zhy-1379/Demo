@@ -3,14 +3,15 @@ package com.c.demo.asm.tool;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.SerialVersionUIDAdder;
 import sun.misc.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -63,6 +64,40 @@ public class SVUIDAddTool {
         reader.accept(adder, 0);
 
         return writer.toByteArray();
+    }
+
+    public static void editJar(String jarPath) {
+        try (ByteArrayOutputStream bArrOS = new ByteArrayOutputStream()) {
+            try (
+                    JarFile jarFile = new JarFile(jarPath);
+                    JarOutputStream os = new JarOutputStream(bArrOS)
+            ) {
+                jarFile.stream().forEach(entry -> {
+                    try (InputStream is = jarFile.getInputStream(entry)) {
+                        os.putNextEntry(new JarEntry(entry.getName()));
+                        String entryName = entry.getName();
+                        byte[] oBytes = IOUtils.readNBytes(is, is.available());
+                        if (entryName.endsWith(".class")) {
+                            ClassReader reader = new ClassReader(oBytes);
+
+                            ClassWriter writer = new ClassWriter(0);
+                            // ClassVisitor adder = new SVUIDAdder(writer);
+                            ClassVisitor adder = new SerialVersionUIDAdder(writer);
+                            reader.accept(adder, 0);
+
+                            oBytes = writer.toByteArray();
+                        }
+                        os.write(oBytes);
+                        os.closeEntry();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            bArrOS.writeTo(new FileOutputStream(jarPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
