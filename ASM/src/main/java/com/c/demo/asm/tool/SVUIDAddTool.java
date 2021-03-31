@@ -3,6 +3,7 @@ package com.c.demo.asm.tool;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import sun.misc.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,19 +29,7 @@ public class SVUIDAddTool {
                 if (!entry.isDirectory()) {
                     String entryName = entry.getName();
                     if (entryName.endsWith(".class")) {
-                        byte[] container = new byte[1024];
-                        int len;
-                        List<Byte> byteList = new ArrayList<>();
-                        while ((len = zis.read(container)) != -1) {
-                            for (int i = 0; i < len; i++) {
-                                byteList.add(container[i]);
-                            }
-                        }
-
-                        byte[] oBytes = new byte[byteList.size()];
-                        for (int i = 0; i < byteList.size(); i++) {
-                            oBytes[i] = byteList.get(i);
-                        }
+                        byte[] oBytes = IOUtils.readNBytes(zis, zis.available());
 
                         ClassReader reader = new ClassReader(oBytes);
 
