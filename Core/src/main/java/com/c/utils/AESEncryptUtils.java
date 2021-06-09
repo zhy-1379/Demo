@@ -2,13 +2,15 @@ package com.c.utils;
 
 import cn.hutool.core.util.StrUtil;
 
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class AESEncryptUtils {
+
+    private AESEncryptUtils() {
+    }
 
     /**
      * 加解密密钥, 外部可以
@@ -26,19 +28,18 @@ public class AESEncryptUtils {
      *
      * @param str 需要加密的字符串
      * @param key 密钥
-     * @return
-     * @throws Exception
+     * @return 密文
      */
     public static String encrypt(String str, String key) {
         if (StrUtil.isEmpty(key)) {
-            throw new RuntimeException("key不能为空");
+            throw new IllegalArgumentException("key不能为空");
         }
         try {
             if (str == null) {
                 return null;
             }
-            // 判断Key是否为16位
-            if (key.length() != 16) {
+            // 判断Key是否合法
+            if (key.length() % 16 != 0) {
                 return null;
             }
             byte[] raw = key.getBytes(StandardCharsets.UTF_8);
@@ -60,11 +61,11 @@ public class AESEncryptUtils {
      *
      * @param str 需要解密的字符串
      * @param key 密钥
-     * @return
+     * @return 明文
      */
     public static String decrypt(String str, String key) {
         if (StrUtil.isEmpty(key)) {
-            throw new RuntimeException("key不能为空");
+            throw new IllegalArgumentException("key不能为空");
         }
         try {
             if (str == null) {
@@ -80,13 +81,8 @@ public class AESEncryptUtils {
             cipher.init(Cipher.DECRYPT_MODE, skeySpec);
             // 先用base64解密
             byte[] encrypted = Base64.getDecoder().decode(str);
-            try {
-                byte[] original = cipher.doFinal(encrypted);
-                String originalString = new String(original, StandardCharsets.UTF_8);
-                return originalString;
-            } catch (Exception e) {
-                return null;
-            }
+            byte[] original = cipher.doFinal(encrypted);
+            return new String(original, StandardCharsets.UTF_8);
         } catch (Exception ex) {
             return null;
         }
@@ -96,8 +92,7 @@ public class AESEncryptUtils {
      * 加密
      *
      * @param str 需要加密的字符串
-     * @return
-     * @throws Exception
+     * @return 密文
      */
     public static String encrypt(String str) {
         return encrypt(str, AES_DATA_SECURITY_KEY);
@@ -107,7 +102,7 @@ public class AESEncryptUtils {
      * 解密
      *
      * @param str 需要解密的字符串
-     * @return
+     * @return 明文
      */
     public static String decrypt(String str) {
         return decrypt(str, AES_DATA_SECURITY_KEY);
@@ -116,22 +111,21 @@ public class AESEncryptUtils {
     /**
      * 查询的时候对某些字段解密
      *
-     * @param str
-     * @return
+     * @param str 需要解密的字符串
+     * @return 名文
      */
     public static String aesDecrypt(String str) {
         if (StrUtil.isBlank(str)) {
             return " ";
         }
-        String sql = " AES_DECRYPT(from_base64(" + str + ")," + "'" + AES_DATA_SECURITY_KEY + "')";
-        return sql;
+        return " AES_DECRYPT(from_base64(" + str + ")," + "'" + AES_DATA_SECURITY_KEY + "')";
     }
 
     /**
-     * 对personKey加密
+     * 对 personKey 加密
      *
-     * @param personKey
-     * @return
+     * @param personKey personKey
+     * @return 密文
      */
     public static String encryptPersonKey(String personKey) {
         return AESEncryptUtils.encrypt(personKey, AES_PERSON_KEY_SECURITY_KEY);
@@ -140,8 +134,8 @@ public class AESEncryptUtils {
     /**
      * 对personKey解密
      *
-     * @param personKey
-     * @return
+     * @param personKey personKey
+     * @return 明文
      */
     public static String decryptPersonKey(String personKey) {
         return AESEncryptUtils.decrypt(personKey, AES_PERSON_KEY_SECURITY_KEY);
