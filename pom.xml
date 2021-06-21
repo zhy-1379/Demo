@@ -13,6 +13,7 @@
         <module>Core</module>
         <module>Spark-Demo</module>
         <module>IO</module>
+        <module>Hadoop-Demo</module>
     </modules>
 
     <properties>
@@ -57,6 +58,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
             <dependency>
